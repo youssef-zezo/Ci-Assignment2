@@ -1,0 +1,59 @@
+import numpy as np
+import random
+
+def initialize_population(pop_size, number_of_variables, R_min, R_max):
+    population = np.zeros((pop_size, number_of_variables))
+    for i in range(pop_size):
+        for j in range(number_of_variables):
+            population[i][j] = np.random.uniform(R_min[j], R_max[j])
+    return population
+
+def arithmetic_crossover(parent1, parent2, alpha):
+    child1 = alpha * parent1 + (1 - alpha) * parent2
+    child2 = (1 - alpha) * parent1 + alpha * parent2
+    return child1, child2
+
+def gaussian_mutation(individual, mean, std, mutation_prob):
+    mutated_individual = np.copy(individual)
+    for i in range(len(mutated_individual)):
+        if np.random.rand() < mutation_prob:
+            mutated_individual[i] += np.random.normal(mean, std)
+    return mutated_individual
+
+def tournament_selection(pop, tournament_size):
+    selected_parents = []
+    pop_size = len(pop)
+    for _ in range(pop_size):
+        tournament_indices = np.random.choice(pop_size, tournament_size, replace=False)
+        tournament = [pop[i] for i in tournament_indices]
+        best_index = np.argmax([fitness_function(individual) for individual in tournament])
+        selected_parents.append(tournament[best_index])
+    return selected_parents
+
+# Define your fitness function
+def fitness_function(individual):
+    # Define your fitness calculation here
+    pass
+
+population = initialize_population(5, 2, [-2, 3], [2, 6])
+print("Initialized Population:")
+print(population)
+
+parent1 = np.array([1, 2])
+parent2 = np.array([3, 4])
+alpha_value = 0.5
+child1, child2 = arithmetic_crossover(parent1, parent2, alpha_value)
+print("Child 1:", child1)
+print("Child 2:", child2)
+
+original_individual = np.array([2.5, 3.0, 1.8, 4.2])
+mean = 0  # Mean for Gaussian mutation
+std = 0.1  # Standard deviation for Gaussian mutation
+mutation_prob = 0.5  # Probability of mutation for each gene
+mutated_individual = gaussian_mutation(original_individual, mean, std, mutation_prob)
+print("Original individual:", list(original_individual))
+print("Mutated individual:", list(mutated_individual))
+
+selected_parents = tournament_selection(population, 2)
+print("Selected Parents:")
+print(selected_parents)
